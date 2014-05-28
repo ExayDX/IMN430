@@ -8,51 +8,38 @@
 #ifndef IMN430_tp1_Tree_h
 #define IMN430_tp1_Tree_h
 
-template<class EdgeT, class PoinT, class EventT>
+template<class EdgeT, /*class PoinT,*/ class EventT>
 class TreeNode{
 public:
-    //----Consrtructors
+
+	//---- Members
+	//PoinT*	  mSite;
+	EdgeT*	  mEdge;
+	EventT*	  mEvent;
+
+    //----Constructors
     TreeNode()
-        : isLeaf(false), site(nullptr), parent(nullptr), edge(nullptr), event(nullptr){
-    }
-    TreeNode(PoinT* pt)
-        : isLeaf(true), site(pt), parent(nullptr), edge(nullptr), event(nullptr){
-    }
+        : /*mSite(nullptr),*/ mEdge(nullptr), mEvent(nullptr){}
+
+    //TreeNode(PoinT* pt)
+    //    : mSite(pt), mEdge(nullptr), mEvent(nullptr){}
     
     //---- Accessors
-    TreeNode* getLeft()const{
-        return left;
-    }
-    TreeNode* getRight()const{
-        return right;
-    }
+ //   double X()const { return mSite->x;}
+ //  
+	//double Y()const { return mSite->y;}
+ //   
+	//double Z()const { return mSite->z;}
     
-    //---- Predicates
-    bool isValidEvent()const{
-        return event->valid;
-    }
+    void setEvent (EventT* e) { this->mEvent = e;}
     
-    //---- Mutators
-    void setLeft(TreeNode* oleft){
-        left = oleft;
-    }
-    void setRight(TreeNode* oright){
-        right = oright;
-    }
-    void setIsValid(const bool isValid){
-        event->valid = isValid;
-    }
-    
-    //---- Members
-    bool      isLeaf;
-	PoinT*	  site;
-	EdgeT*	  edge;//TODO should we really put that here ????
-	EventT*	  event;
-	TreeNode* parent;
-    
-    //TODO private ?
-    TreeNode* left;
-    TreeNode* right;
+	//---- CompareFunction
+  //  struct Compare{
+  //      bool operator()(const TreeNode v1, const TreeNode v2)
+		//{
+  //          return v1.mSite->x < v2.mSite->x;
+  //      }
+  //  };
 };
 
 #endif

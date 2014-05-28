@@ -15,12 +15,14 @@
     <ClInclude Include="..\..\..\..\src\Edge.h" />
     <ClInclude Include="..\..\..\..\src\EdgeIterator.h" />
     <ClInclude Include="..\..\..\..\src\Region.h" />
+    <ClInclude Include="..\..\..\..\src\Tree.h" />
+    <ClInclude Include="..\..\..\..\src\utils.h" />
     <ClInclude Include="..\..\..\..\src\Vertex.h" />
-    <ClInclude Include="..\..\..\..\src\Voronoi.h" />
+    <ClInclude Include="..\..\..\..\src\VoronoiDiagram.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\main.cpp" />
-    <ClCompile Include="..\..\..\..\src\Voronoi.cpp" />
+    <ClCompile Include="..\..\..\..\src\VoronoiDiagram.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3B3A0C41-0EDA-496F-B2E9-8A0B72A37971}</ProjectGuid>

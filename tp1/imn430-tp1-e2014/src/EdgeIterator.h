@@ -10,17 +10,22 @@
 
 #include "Edge.h"
 
-namespace DCEL {
+namespace DCEL 
+{
     /*
         Base Iterator Class for edges in a DCEL
      */
-    class EdgeIterator{
+    class EdgeIterator
+	{
     public:
         //---- Predicates
-        inline bool hasNext()const{
+        inline bool hasNext()const
+		{
             return next != nullptr;
         }
-        inline bool isStart(const Edge* const edge)const{
+
+        inline bool isStart(const Edge* const edge)const
+		{
             return edge == start;
         }
         
@@ -28,23 +33,34 @@ namespace DCEL {
         inline virtual Edge* getNext() = 0;
         
         //---- Operators
-        EdgeIterator& operator ++(){
+        EdgeIterator& operator ++()
+		{
             this->getNext();
             return *this;
         }
-        const bool operator ==(const EdgeIterator& ie)const{
+
+        const bool operator ==(const EdgeIterator& ie)const
+		{
             return &ie == this;
         }
-        bool operator ==(const EdgeIterator& ie){
+
+        bool operator ==(const EdgeIterator& ie)
+		{
             return &ie == this;
         }
-        const bool operator !=(const EdgeIterator& ie)const{
+
+        const bool operator !=(const EdgeIterator& ie)const
+		{
             return !(operator==(ie));
         }
-        bool operator !=(const EdgeIterator& ie){
+
+        bool operator !=(const EdgeIterator& ie)
+		{
             return !(operator==(ie));
         }
-        Edge* operator*()const{
+
+        Edge* operator*()const
+		{
             return this->next;
         }
         
@@ -54,11 +70,10 @@ namespace DCEL {
          Desactivate constructions for not childs
          */
         EdgeIterator(Edge* startEdge = nullptr)
-            : start(startEdge), next(startEdge){
-        }
+            : start(startEdge), next(startEdge){}
+
         EdgeIterator(const EdgeIterator& ei)
-            : start(ei.start), next(ei.next){
-        }
+            : start(ei.start), next(ei.next){}
         
         //---- Members
         Edge* start;

@@ -14,7 +14,8 @@
     using std::shared_ptr;
 
 
-namespace DCEL {
+namespace DCEL 
+{
     /*
         Region or face in a DCEL
      
@@ -25,56 +26,62 @@ namespace DCEL {
         while next(e) != start
             e = next(e)
      */
-    class Region{
+    class Region
+	{
     public:
         //---- Constructors
         Region(HalfEdge* obound = nullptr) :
-            bound(obound){
-        }
+            bound(obound){}
         
         //---- Accessors
-        inline HalfEdge* getBound() const{
+        inline HalfEdge* getBound() const
+		{
             return bound;
         }
         
         //---- Mutators
-        inline void setBound(HalfEdge* bound){
+        inline void setBound(HalfEdge* bound)
+		{
             assert(bound);
             this->bound = bound;
         }
         
         //---- Iterators
     private:
-        class RegionIterator : public EdgeIterator{
+        
+		class RegionIterator : public EdgeIterator
+		{
         public:
             //---- Constructors
             RegionIterator(const Region* region)
-                : EdgeIterator(region->getBound()){
-            }
+                : EdgeIterator(region->getBound()){}
             
             //---- Overriden Methods
-            inline Edge* getNext(){
+            inline Edge* getNext()
+			{
                 Edge* n = this->next;
                 
                 //--- If not the end we go foward
-                if(this->hasNext()){
+                if(this->hasNext())
                     this->next = this->next->getNext();
-                }
                 
                 //--- If we are at the begining then it's the end
-                if(this->isStart(this->next)){
+                if(this->isStart(this->next))
                     this->next = nullptr;
-                }
                 
                 return n;
             }
         };
+
     public:
         typedef RegionIterator iterator_type;
-        iterator_type begin(){
+        iterator_type begin()
+		{
             return iterator_type(this);
         }
-        iterator_type end(){
+
+        iterator_type end()
+		{
             return iterator_type(nullptr);
         }
         

@@ -20,17 +20,19 @@
 #include <time.h>
 #include <set>
 
-#include "utils.h"
 #include "DCEL.h"
-#include "Voronoi.h"
+#include "VoronoiDiagram.h"
 
 #define GLUT_DISABLE_ATEXIT_HACK
 
-using namespace UTILS;
 
+//Variable definition
 GLint windowWidth = 500;
 GLint windowHeight = 500;
+std::vector<DCEL::Vertex*> displaySites;
+VoronoiDiagram diagram;
 
+//Function declarations
 void init();
 void display();
 void reshape(int width, int height);
@@ -39,9 +41,7 @@ void drawControlPoints();
 void drawVoronoiDiagram();
 void drawEdges();
 
-//FIXME: devrait on placer cette variable dans le .h?
-std::set<DCEL::Vertex*, DCEL::Vertex::Compare> sites;
-
+//Function definitions
 int main(int argc, char * argv[])
 {
     glutInit(&argc, argv);
@@ -78,14 +78,13 @@ void mouseButton( int button, int state, int x, int y )
 	if(state == GLUT_DOWN)
 	{
         GLfloat pixels[3];
-        glReadPixels(x, windowHeight - y, 1, 1, GL_RGB, GL_FLOAT, &pixels);
-        
-//        if(pixels[0] != 0.0 || pixels[1] != 0.0 || pixels[2] != 0.0)
-        {
-            sites.insert(new DCEL::Vertex(x,y));
-            //return;
-        }
+        glReadPixels(x, y, 1, 1, GL_RGB, GL_FLOAT, &pixels);
+
+        displaySites.push_back(new DCEL::Vertex(x,y));
+        diagram.addSite(new DCEL::Vertex(x - windowWidth/2,-y + windowHeight/2));
+        diagram.fortuneAlgorithm();
 	}
+
 	glutPostRedisplay();
 }
 
@@ -127,10 +126,8 @@ void drawControlPoints()
     
     glBegin(GL_POINTS);
 
-        for(auto iter = sites.begin(); iter != sites.end(); ++iter)
-        {
-            glVertex2i((*iter)->x - windowWidth/2, -(*iter)->y + windowHeight/2);
-        }
+	for (int i = 0; i < displaySites.size(); ++i)
+		glVertex2i((displaySites[i]->x) - windowWidth / 2, (-displaySites[i]->y) + windowHeight / 2); 
     
     glEnd();
     
@@ -139,8 +136,6 @@ void drawControlPoints()
 
 void drawVoronoiDiagram()
 {
-    VoronoiDiagram v;
-    v.fortuneAlgorithm(sites);
     //TODO: a implanter
 }
 

@@ -1,32 +1,19 @@
-﻿Build started 2014-05-19 1:15:22 PM.
+﻿Build started 2014-05-27 4:36:18 PM.
      1>Project "C:\Users\Myriam\Documents\Université\S-E14\IMN430\tp1\imn430-tp1-e2014\IMN430-TP1\IMN430-TP1.vsproj\Tp1\Tp1\Tp1.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\glut-3.7\include" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\..\..\src\Voronoi.cpp ..\..\..\..\src\main.cpp
-         Voronoi.cpp
-     1>c:\users\myriam\documents\université\s-e14\imn430\tp1\imn430-tp1-e2014\src\vertex.h(99): error C2784: 'std::basic_ostream<_Elem,_Traits> &std::operator <<(std::basic_ostream<_Elem,_Traits> &,const std::shared_ptr<_Ty> &)' : could not deduce template argument for 'const std::shared_ptr<_Ty> &' from 'const char [2]'
-                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\memory(878) : see declaration of 'std::operator <<'
-     1>c:\users\myriam\documents\université\s-e14\imn430\tp1\imn430-tp1-e2014\src\vertex.h(99): error C2676: binary '<<' : 'std::ostream' does not define this operator or a conversion to a type acceptable to the predefined operator
-     1>c:\users\myriam\documents\université\s-e14\imn430\tp1\imn430-tp1-e2014\src\voronoi.h(81): error C2143: syntax error : missing ';' before '<'
-     1>c:\users\myriam\documents\université\s-e14\imn430\tp1\imn430-tp1-e2014\src\voronoi.h(81): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-     1>c:\users\myriam\documents\université\s-e14\imn430\tp1\imn430-tp1-e2014\src\voronoi.h(81): error C2238: unexpected token(s) preceding ';'
-     1>c:\users\myriam\documents\université\s-e14\imn430\tp1\imn430-tp1-e2014\src\voronoi.cpp(52): error C2065: 'root' : undeclared identifier
-     1>c:\users\myriam\documents\université\s-e14\imn430\tp1\imn430-tp1-e2014\src\voronoi.cpp(52): error C2228: left of '.clear' must have class/struct/union
-                 type is 'unknown-type'
-     1>c:\users\myriam\documents\université\s-e14\imn430\tp1\imn430-tp1-e2014\src\voronoi.cpp(91): error C2065: 'root' : undeclared identifier
-     1>c:\users\myriam\documents\université\s-e14\imn430\tp1\imn430-tp1-e2014\src\voronoi.cpp(91): error C2228: left of '.empty' must have class/struct/union
-                 type is 'unknown-type'
-     1>c:\users\myriam\documents\université\s-e14\imn430\tp1\imn430-tp1-e2014\src\voronoi.cpp(92): error C2065: 'root' : undeclared identifier
-     1>c:\users\myriam\documents\université\s-e14\imn430\tp1\imn430-tp1-e2014\src\voronoi.cpp(92): error C2228: left of '.insert' must have class/struct/union
-                 type is 'unknown-type'
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\glut-3.7\include" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\..\..\src\VoronoiDiagram.cpp ..\..\..\..\src\main.cpp
+         VoronoiDiagram.cpp
          Generating Code...
          Compiling...
          main.cpp
-     1>c:\users\myriam\documents\université\s-e14\imn430\tp1\imn430-tp1-e2014\src\voronoi.h(81): error C2143: syntax error : missing ';' before '<'
-     1>c:\users\myriam\documents\université\s-e14\imn430\tp1\imn430-tp1-e2014\src\voronoi.h(81): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-     1>c:\users\myriam\documents\université\s-e14\imn430\tp1\imn430-tp1-e2014\src\voronoi.h(81): error C2238: unexpected token(s) preceding ';'
+     1>c:\users\myriam\documents\université\s-e14\imn430\tp1\imn430-tp1-e2014\src\main.cpp(129): warning C4018: '<' : signed/unsigned mismatch
          Generating Code...
-     1>Done Building Project "C:\Users\Myriam\Documents\Université\S-E14\IMN430\tp1\imn430-tp1-e2014\IMN430-TP1\IMN430-TP1.vsproj\Tp1\Tp1\Tp1.vcxproj" (Build target(s)) -- FAILED.
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Myriam\Documents\Université\S-E14\IMN430\tp1\imn430-tp1-e2014\IMN430-TP1\IMN430-TP1.vsproj\Tp1\Debug\Tp1.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\glut-3.7\lib" glut32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Myriam\Documents\Université\S-E14\IMN430\tp1\imn430-tp1-e2014\IMN430-TP1\IMN430-TP1.vsproj\Tp1\Debug\Tp1.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Myriam\Documents\Université\S-E14\IMN430\tp1\imn430-tp1-e2014\IMN430-TP1\IMN430-TP1.vsproj\Tp1\Debug\Tp1.lib" /MACHINE:X86 Debug\main.obj
+         Debug\VoronoiDiagram.obj
+         Tp1.vcxproj -> C:\Users\Myriam\Documents\Université\S-E14\IMN430\tp1\imn430-tp1-e2014\IMN430-TP1\IMN430-TP1.vsproj\Tp1\Debug\Tp1.exe
+     1>Done Building Project "C:\Users\Myriam\Documents\Université\S-E14\IMN430\tp1\imn430-tp1-e2014\IMN430-TP1\IMN430-TP1.vsproj\Tp1\Tp1\Tp1.vcxproj" (Build target(s)).
 
-Build FAILED.
+Build succeeded.
 
-Time Elapsed 00:00:00.59
+Time Elapsed 00:00:01.72

@@ -128,6 +128,7 @@ namespace DCEL {
         };
     };
     
+
     typedef std::shared_ptr<Vertex> vertex_ptr;
 }
 
