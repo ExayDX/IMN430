@@ -45,6 +45,9 @@ namespace DCEL {
         inline Region* getRegion()const{
             return this->left;
         }
+        inline Vertex* getSite()const{
+            return this->site;
+        }
         
         //---- Mutators
         inline void setTwin(Edge* twin){
@@ -75,6 +78,11 @@ namespace DCEL {
             
             this->left = leftRegion;
         }
+        inline void setSite(Vertex* site){
+            assert(site);
+            
+            this->site = site;
+        }
         
     private:
         //---- Members
@@ -83,6 +91,8 @@ namespace DCEL {
         Edge* twin;
         Vertex*   origin;
         Region*   left;
+        
+        Vertex* site;
     };
     
     //---- An edge is a half edge

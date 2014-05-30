@@ -105,6 +105,12 @@ namespace DCEL {
         const bool operator < (const Vertex& v)const{
             return y < v.y;
         }
+        bool operator > (const Vertex& v){
+            return y > v.y;
+        }
+        const bool operator > (const Vertex& v)const{
+            return y > v.y;
+        }
         /*
             Print a Vertex as (x, y, z)
          */
@@ -123,7 +129,7 @@ namespace DCEL {
         
         struct Compare : public std::binary_function<Vertex*, Vertex*, bool>{
             bool operator()(const Vertex* v1, const Vertex* v2){
-                return *v1 < *v2;
+                return v1->y > v2->y;
             }
         };
     };

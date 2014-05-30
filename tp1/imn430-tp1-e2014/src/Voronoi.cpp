@@ -29,29 +29,35 @@ bool VoronoiDiagram::SiteEvent::isSiteEvent()const{
 }
 
 //---------------CircleEvent---------------
-VoronoiDiagram::CircleEvent::CircleEvent(DCEL::Vertex* triggerPoint, DCEL::Vertex center)
+VoronoiDiagram::CircleEvent::CircleEvent(DCEL::Vertex* triggerPoint, DCEL::Vertex center, const VoronoiDiagram::tree_type* tNode)
     : VoronoiDiagram::VoronoiEvent(triggerPoint)
+    , node(tNode)
     , mCenter(center)
 {
 }
 bool VoronoiDiagram::CircleEvent::isSiteEvent()const{
     return false;
 }
-bool VoronoiDiagram::CircleEvent::isValid()const{
-    return valid;
-}
-void VoronoiDiagram::CircleEvent::setValid(const bool isValid){
-    valid = isValid;
-}
 
 //---------------VoronoiDiagram---------------
+void VoronoiDiagram::addSite(DCEL::Vertex vertex)
+{
+    bbMin.x = bbMin.x > vertex.x ? vertex.x : bbMin.x;
+    bbMin.y = bbMin.y > vertex.y ? vertex.y : bbMin.y;
+    bbMax.x = bbMax.x < vertex.x ? vertex.x : bbMax.x;
+    bbMax.y = bbMax.y < vertex.y ? vertex.y : bbMax.y;
+    
+    sites.insert(new DCEL::Vertex(vertex));
+}
+
+
 //void VoronoiDiagram::fortuneAlgorithm(const std::set<DCEL::Vertex*, DCEL::Vertex::Compare>& sites){
 void VoronoiDiagram::fortuneAlgorithm(){
+    vertices.clear();
+    
     if(sites.empty()){
         return;
     }
-
-    std::vector<DCEL::Edge> edges;
     
     //Step1
     for(auto iter = sites.begin(); iter != sites.end(); iter++){
@@ -77,34 +83,35 @@ void VoronoiDiagram::fortuneAlgorithm(){
                 handleCircleEvent(reinterpret_cast<CircleEvent*>(event));
             }
         }
-        delete event;
+//FIXME: A REMETTRE
+//        delete event;
     }
     
     //Step3
-    //finishEdge();
+    finishEdge();
     
     //return edges;
 }
 
-double VoronoiDiagram::getIntersection(VoronoiDiagram::tree_type* par, const double y)const{
-    /*VoronoiDiagram::tree_type* left = VParabola::GetLeftChild(par);
-    VoronoiDiagram::tree_type* right= VParabola::GetRightChild(par);
- 
-    DCEL::Vertex* p = left->site;
-    DCEL::Vertex* r = right->site;
+/*
+ Here we have the case where we have a double intersection at the same point
+ like 2 horz point. In that case we need to figure out a way to solve that...
+ !!!!!!!!!!!!
+ */
+void VoronoiDiagram::getIntersection(DCEL::Vertex* s1, DCEL::Vertex* s2, DCEL::Vertex* i1, DCEL::Vertex* i2, const double y)const
+{
+    //Get parabola distance
+    double dp1 = 2.0 * (s1->y - y);
+    const double a1 = 1.0 / dp1;
+    const double b1 = -2.0 * s1->x / dp1;
+    const double c1 = y + dp1 / 4 + s1->x * s1->x / dp1;
  
     //Get parabola distance
-    double dp = 2.0 * (p->y - y);
-    const double a1 = 1.0 / dp;
-    const double b1 = -2.0 * p->x / dp;
-    const double c1 = y + dp / 4 + p->x * p->x / dp;
- 
-    //Get parabola distance
-    dp = 2.0 * (r->y - y);
-    const double a2 = 1.0 / dp;
-    const double b2 = -2.0 * r->x/dp;
-    const double c2 = y + dp / 4 + r->x * r->x / dp;
- 
+    double dp2 = 2.0 * (s2->y - y);
+    const double a2 = 1.0 / dp2;
+    const double b2 = -2.0 * s2->x/dp2;
+    const double c2 = y + dp2 / 4 + s2->x * s2->x / dp2;
+    
     //Compare Equation
     const double a = a1 - a2;
     const double b = b1 - b2;
@@ -116,13 +123,49 @@ double VoronoiDiagram::getIntersection(VoronoiDiagram::tree_type* par, const dou
     const double sqrt_disct = std::sqrt(disc);
     
     //Get point value
-    const double x1 = (-b + sqrt_disct) / _2_A;
-    const double x2 = (-b - sqrt_disct) / _2_A;
- 
-    //Getthe closest
-    return ((p->y < r->y) ? std::max(x1, x2) : std::min(x1, x2));*/
-    return 0;
+    i1->x = (-b + sqrt_disct) / _2_A;
+    i2->x = (-b - sqrt_disct) / _2_A;
+    i1->y = -(-c1 + dp1 / 4 + i1->x * i1->x / dp1);
+    i2->y = -(-c2 + dp2 / 4 + i2->x * i2->x / dp2);
+    
 }
+
+//void VoronoiDiagram::getIntersection(DCEL::Vertex* s1, DCEL::Vertex* s2, const double y)const
+//{
+//    DCEL::Vertex i1, i2;
+//    
+//    getIntersection(s1, s2, i1, i2, y);
+//    
+//    //Get parabola distance
+//    double dp = 2.0 * (s1->y - y);
+//    const double a1 = 1.0 / dp;
+//    const double b1 = -2.0 * s1->x / dp;
+//    const double c1 = y + dp / 4 + s1->x * s1->x / dp;
+//    
+//    //Get parabola distance
+//    dp = 2.0 * (s2->y - y);
+//    const double a2 = 1.0 / dp;
+//    const double b2 = -2.0 * s2->x/dp;
+//    const double c2 = y + dp / 4 + s2->x * s2->x / dp;
+//    
+//    //Compare Equation
+//    const double a = a1 - a2;
+//    const double b = b1 - b2;
+//    const double c = c1 - c2;
+//    
+//    //Compute discriminant
+//    const double disc = b*b - 4 * a * c;
+//    const double _2_A = 2*a;
+//    const double sqrt_disct = std::sqrt(disc);
+//    
+//    //Get point value
+//    const double x1 = (-b + sqrt_disct) / _2_A;
+//    const double x2 = (-b - sqrt_disct) / _2_A;
+//    
+//    //Getthe closest
+//    return ((p->y < r->y) ? std::max(x1, x2) : std::min(x1, x2));
+//    
+//}
 
 //FIXME: I guess we must handle the case were we have 2 points verticals and one to the side.
 bool VoronoiDiagram::computeCircle(DCEL::Vertex v1, DCEL::Vertex v2,
@@ -209,7 +252,7 @@ void VoronoiDiagram::addCircleEvent(VoronoiDiagram::status_type::iterator iter, 
 void VoronoiDiagram::handleSiteEvent(DCEL::Vertex* site){
     if(mStatusTree.empty())
     {
-        mStatusTree.insert(site);
+        mStatusTree.insert(tree_type(site, nullptr));
         return;
     }
     
@@ -234,26 +277,43 @@ void VoronoiDiagram::handleSiteEvent(DCEL::Vertex* site){
         intersectedParabola->event->setValid(false);
     }
     
-//Step 3 insert the new site in the tree
-    mStatusTree.insert(site);
-    //maybe there<s shit missing here
+    //Step 3 insert the new site in the tree
+    auto insertPos = (mStatusTree.insert(tree_type(site,nullptr)).first);
     
-//Step 4 edges
-    //TODO: step 4 edges
+    //Step 4 edges
+    //TODO: a terminer
+    createEdges(site, intersectedParabola->site, minYInter);
+//    DCEL::Edge* tmp = new DCEL::Edge(new DCEL::Vertex(site->x, minYInter));
+//    tmp->setSite1(intersectedParabola->site);
+//    tmp->setSite2(site);
+//    
+//    edges.push_back(DCEL::Edge(new DCEL::Vertex(site->x, minYInter)));
+//    edges.push_back(tmp);
     
 //Step 5 Create circles
-    checkCircleEvent(intersectedParabola, site->x );
-    checkCircleEvent(prev(intersectedParabola), site->x );
-    checkCircleEvent(next(intersectedParabola), site->x );
+    //the left one
+    if(intersectedParabola != mStatusTree.begin())
+    {
+        checkCircleEvent(prev(intersectedParabola), &(*insertPos),site->x );
+    }
     
+    //the middle one
+    checkCircleEvent(intersectedParabola, &(*insertPos), site->x );
+    
+    //the right one
+    if(next(intersectedParabola) != mStatusTree.end())
+    {
+        checkCircleEvent(next(intersectedParabola), &(*insertPos), site->x);
+    }
 }
 
 //code very lightly modifed from http://www.cs.hmc.edu/~mbrubeck/voronoi.html
 bool VoronoiDiagram::circle(DCEL::Vertex p1, DCEL::Vertex p2, DCEL::Vertex p3, double *radius, DCEL::Vertex *center)
 {
+    //FIXME: check
     // Check that bc is a "right turn" from ab.
-    if ((p2.x-p1.x)*(p3.y-p1.y) - (p3.x-p1.x)*(p2.y-p1.y) > 0)
-        return false;
+    //if ((p2.x-p1.x)*(p3.y-p1.y) - (p3.x-p1.x)*(p2.y-p1.y) > 0)
+    //    return false;
     
     // Algorithm from O'Rourke 2ed p. 189.
     double A = p2.x - p1.x,  B = p2.y - p1.y,
@@ -273,7 +333,7 @@ bool VoronoiDiagram::circle(DCEL::Vertex p1, DCEL::Vertex p2, DCEL::Vertex p3, d
     return true;
 }
 
-void VoronoiDiagram::checkCircleEvent(status_type::iterator parabola, double x)
+void VoronoiDiagram::checkCircleEvent(status_type::iterator parabola, const tree_type* node, double x)
 {
     //If there's no site before or after, do not compute...
     if ((parabola == mStatusTree.begin()) || (parabola == std::prev(mStatusTree.end())))
@@ -288,43 +348,50 @@ void VoronoiDiagram::checkCircleEvent(status_type::iterator parabola, double x)
     DCEL::Vertex circleCenter;
     double circleRadius;
     
-    if (circle(a, b, c, &circleRadius, &circleCenter) && (circleRadius > x)) {
+    if (circle(a, b, c, &circleRadius, &circleCenter) && (circleRadius > x))
+    {
         //Create a pointer to a new circle event
-        CircleEvent* newEvent = new CircleEvent(new DCEL::Vertex(circleCenter.x, circleCenter.y - circleRadius), circleCenter/*???, parabola*/);
-//        parabola->event = newEvent;
-        parabola->setEvent(newEvent);
+        CircleEvent* newEvent = new CircleEvent(new DCEL::Vertex(circleCenter.x, circleCenter.y - circleRadius), circleCenter, &(*parabola));
+        const_cast<tree_type*>(&(*parabola))->event = newEvent;
+        
         //Add the event in the event queue
         mEventQueue.push(parabola->event);
     }
     
-    
 }
 
-void VoronoiDiagram::handleCircleEvent(VoronoiDiagram::CircleEvent* event){
-//    assert(event->node);
-//    
-//    if(event->isValid()){
-//        assert(event->point);
-//        DCEL::Vertex* pt = event->point;
-//        
-//        //Start a new segment
-//        DCEL::Edge* segment = new DCEL::Edge();
-//        
-//        //Get arcs from the beachline
-//        tree_type* node = event->node;
-//        tree_type* left = node->getLeft();
-//        tree_type* right = node->getRight();
-//        
-//        //Remove node from the beachline
-//        if(left){
-//            left->setRight(right);
-//            checkCircle(left, pt);
-//        }
-//        if(right){
-//            right->setLeft(left);
-//            checkCircle(left, pt);
-//        }
+void VoronoiDiagram::handleCircleEvent(VoronoiDiagram::CircleEvent* event)
+{
+//FIXME: to keep
+//    if(!event->valid) //sanity check
+//    {
+//        return;
 //    }
+//    
+//    //step1
+//    //Fuck alex!!! et ses ITS
+//    auto iter = mStatusTree.find(*(event->node));
+//    if(iter != mStatusTree.begin() && prev(iter)->event != nullptr){
+//        auto p = prev(iter);
+//        p->event->setValid(false);
+//        const_cast<tree_type*>(&(*p))->event = nullptr;
+//    }
+//    if(iter != mStatusTree.end() && next(iter)->event != nullptr){
+//        auto n = next(iter);
+//        n->event->setValid(false);
+//        const_cast<tree_type*>(&(*n))->event = nullptr;
+//    }
+//    
+//    //Step 2
+//    vertices.push_back(event->mCenter);
+//    //create 2 half-edge record corresponding to the new breakpoint on the beach line.
+//    //set the pointer between them
+//    //Attatch the 3 new record to the half-edge that end at the vertex
+//    
+//    
+//    //delete the site from the tree
+//    mStatusTree.erase(*(event->node));
+//    event->setValid(false);
 }
 
 void VoronoiDiagram::checkCircle(tree_type* node, DCEL::Vertex* point){
@@ -363,8 +430,48 @@ void VoronoiDiagram::checkCircle(tree_type* node, DCEL::Vertex* point){
 //
 //
 
+void VoronoiDiagram::finishEdge()
+{
+    double deepestSweep = bbMax.x + (bbMax.x-bbMin.x) + (bbMax.y-bbMin.y);
+    
+    for(auto iter = mStatusTree.begin(); iter != mStatusTree.end(); iter++)
+    {
+//        if(iter->edge)
+            
+    }
+}
 
-
-
-
-
+void VoronoiDiagram::createEdges(DCEL::Vertex* s1, DCEL::Vertex* s2, double sweepDepth)
+{
+    DCEL::HalfEdge* e1 = new DCEL::HalfEdge();
+    DCEL::HalfEdge* e2 = new DCEL::HalfEdge();
+    
+    e1->setSite(s1);
+    e1->setTwin(e2);
+    
+    e2->setSite(s2);
+    e2->setTwin(e1);
+    
+    DCEL::Vertex i1, i2;
+    getIntersection(s1, s2, &i1, &i2, sweepDepth-1);
+    
+    if(s1->y == s2->y)
+    {
+        //we need compute the middle point
+    }
+    else
+    {
+        DCEL::Vertex* siteMaxY = s1->y > s2->y ? s1 : s2;
+        DCEL::Vertex* siteMinY = s1->y < s2->y ? s1 : s2;
+        DCEL::Vertex* interMinX = i1.x < i2.x ? &i1 : &i2;
+        DCEL::Vertex* interMaxX = i1.x > i2.x ? &i1 : &i2;
+        
+        e1->setOrigin(interMinX);
+        e1->setSite(siteMaxY);
+        //TODO:Il faut assoicier le edge a une region
+        
+        e2->setOrigin(interMaxX);
+        e2->setSite(siteMinY);
+        //TODO:Il faut assoicier le edge a une region
+    }
+}

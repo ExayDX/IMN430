@@ -43,11 +43,24 @@ private:
         
         //---- Virtual Methods
         virtual bool isSiteEvent()const = 0;
-        bool isValid()const { return true; };
+        
+        //Crotte
+        bool isValid()const { return valid; };
+        void setValid(bool valid){
+            this->valid = valid;
+        }
+        
         //---- Comparator Object
         struct EventCompare : public std::binary_function<VoronoiEvent*, VoronoiEvent*, bool>{
             bool operator()(const VoronoiEvent* e1, const VoronoiEvent* e2){
-                return e1->point < e2->point;
+                return e1->point->y > e2->point->y;
+            }
+        };
+        template<class T>
+        struct ptr_great
+            : public std::binary_function<T, T, bool> {
+            bool operator()(const T& left, const T& right) const{
+                return ((*left).point->y > ( *right).point->y);
             }
         };
         
@@ -60,16 +73,13 @@ private:
     public:
         SiteEvent(DCEL::Vertex* pt);
         bool isSiteEvent()const;
-        
     };
 
     class CircleEvent : public VoronoiEvent{
     public:
-        CircleEvent(DCEL::Vertex* pt, DCEL::Vertex center);
+        CircleEvent(DCEL::Vertex* pt, DCEL::Vertex center, const TreeNode<DCEL::Edge, DCEL::Vertex, CircleEvent>* node);
         bool isSiteEvent()const;
-        bool isValid()const;
-        void setValid(const bool isValid);
-        TreeNode<DCEL::Edge, DCEL::Vertex, CircleEvent>* node;
+        const TreeNode<DCEL::Edge, DCEL::Vertex, CircleEvent>* node;
         DCEL::Vertex mCenter;
     };
     
@@ -91,12 +101,12 @@ public:
     //FIXME: to delete if it work
     //void fortuneAlgorithm(const std::set<DCEL::Vertex*, DCEL::Vertex::Compare>& sites);
     void fortuneAlgorithm();
-    void addSite(DCEL::Vertex vertex) {sites.insert(new DCEL::Vertex(vertex));}
+    void addSite(DCEL::Vertex vertex);
+    const vector<DCEL::Vertex>& getVertices() {return vertices;};
     
 private:
     //---- Private Methods
-    //FIXME to remove
-    double getIntersection(tree_type* par, const double y)const;
+    void getIntersection(DCEL::Vertex* site1, DCEL::Vertex* site2, DCEL::Vertex* i1, DCEL::Vertex* i2, const double y)const;
     //FIXME to remove
     void checkCircle(tree_type* node, DCEL::Vertex* point);
     bool circle(DCEL::Vertex p1, DCEL::Vertex p2, DCEL::Vertex p3, double *radius, DCEL::Vertex *center);
@@ -105,21 +115,29 @@ private:
                        double& radius);
     void addCircleEvent(status_type::iterator iter, bool isLeft);
     
+    void finishEdge();
+    
+    void createEdges(DCEL::Vertex* s1, DCEL::Vertex* s2, double sweepDepth);
+    
     //---- Event handlers
     void handleSiteEvent(DCEL::Vertex* point);
     void handleCircleEvent(VoronoiDiagram::CircleEvent* event);
-    void checkCircleEvent(status_type::iterator site, double x);
+    void checkCircleEvent(status_type::iterator site, const tree_type* node, double x);
     
     //---- Members
-    std::priority_queue<VoronoiEvent*> mEventQueue;//Handle events base on it's y coord
+    std::priority_queue<VoronoiEvent*, std::vector<VoronoiEvent*>, VoronoiEvent::ptr_great<VoronoiEvent*> > mEventQueue;//Handle events base on it's y coord
 
     tree_type* root;//To maintain the topology of the beach line
     status_type mStatusTree;
-    vector<DCEL::Vertex*> vertices;//Keep track of the constructed VD
+    vector<DCEL::Vertex> vertices;//Keep track of the constructed VD
     double line;//sweep line
     
     double width;//Bouding width of the VD
     double height;//Bounding Heigth of the VD
-    std::set<DCEL::Vertex*, tree_type::Compare> sites;
+    std::set<DCEL::Vertex*, DCEL::Vertex::Compare> sites;
+    
+    std::vector<DCEL::Edge> edges;
+    DCEL::Vertex bbMin;
+    DCEL::Vertex bbMax;
 };
 #endif /* defined(__IMN430_TP1__Voronoi__) */

@@ -15,8 +15,8 @@ public:
     TreeNode()
         : site(nullptr), edge(nullptr), event(nullptr){
     }
-    TreeNode(PoinT* pt)
-        : site(pt), edge(nullptr), event(nullptr){
+    TreeNode(PoinT* pt, EventT* ev)
+        : site(pt), event(ev), edge(nullptr){
     }
     
     //---- Accessors

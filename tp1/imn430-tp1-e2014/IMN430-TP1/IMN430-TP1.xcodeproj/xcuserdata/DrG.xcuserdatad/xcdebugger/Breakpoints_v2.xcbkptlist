@@ -22,17 +22,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../src/Voronoi.cpp"
-            timestampString = "422733897.9044"
+            filePath = "../src/main.cpp"
+            timestampString = "423174857.934166"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "65"
-            endingLineNumber = "65"
-            landmarkName = "VoronoiDiagram::fortuneAlgorithm()"
-            landmarkType = "5">
+            startingLineNumber = "79"
+            endingLineNumber = "79"
+            landmarkName = "mouseButton( int button, int state, int x, int y )"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

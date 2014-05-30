@@ -141,6 +141,24 @@ void drawControlPoints()
 void drawVoronoiDiagram()
 {
     //TODO: a implanter
+    //draw voronoid vertex
+    
+    if(diagram.getVertices().size() == 0)
+    {
+        return;
+    }
+    
+    glColor3f(0.0f, 0.0f, 1.0f);
+    glPointSize(5);
+    
+    glBegin(GL_POINTS);
+    
+    for(auto iter = diagram.getVertices().begin(); iter < diagram.getVertices().end(); iter++)
+    {
+        glVertex2i(iter->x, iter->y);
+    }
+    
+    glEnd();
 }
 
 void drawEdges()
