@@ -10,6 +10,14 @@
 
 #include <cassert>
 
+#ifdef __APPLE__
+	#include <GLUT/glut.h>
+#else
+	#include <GL/glut.h>
+	#include <GL/glu.h>
+	#include <GL/gl.h>
+#endif
+
 namespace DCEL {
     //---- Foward Declaration
     class Region;
@@ -42,11 +50,14 @@ namespace DCEL {
         inline Vertex* getOrigin()const{
             return this->origin;
         }
-        inline Region* getRegion()const{
+		inline Vertex* getEnd()const{
+			return this->twin->getOrigin(); 
+		}
+        inline Region* getLeftRegion()const{
             return this->left;
         }
-        inline Vertex* getSite()const{
-            return this->site;
+        inline Region* getRegion()const{
+            return this->region;
         }
         
         //---- Mutators
@@ -73,16 +84,24 @@ namespace DCEL {
             
             this->origin = origin;
         }
-        inline void setRegion(Region* leftRegion){
+        inline void setLeftRegion(Region* leftRegion){
             assert(leftRegion);
             
             this->left = leftRegion;
         }
-        inline void setSite(Vertex* site){
-            assert(site);
-            
-            this->site = site;
+        inline void setRegion(Region* aRegion){
+            this->region = aRegion;
         }
+		
+		//TODO : uncomment glVertex2f : circle inclusion problem 
+		inline void draw(){
+			glLineWidth(2.0);
+			glColor3f(1.0, 1.0, 1.0);
+			glBegin(GL_LINES);
+//				glVertex2f(origin->x, origin->y);
+//				glVertex2f(getEnd()->x, getEnd()->y);
+			glEnd();
+		}
         
     private:
         //---- Members
@@ -91,8 +110,7 @@ namespace DCEL {
         Edge* twin;
         Vertex*   origin;
         Region*   left;
-        
-        Vertex* site;
+        Region*   region;
     };
     
     //---- An edge is a half edge

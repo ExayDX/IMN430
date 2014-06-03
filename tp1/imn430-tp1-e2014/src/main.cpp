@@ -25,20 +25,24 @@
 
 #define GLUT_DISABLE_ATEXIT_HACK
 
-GLint windowWidth = 500;
-GLint windowHeight = 500;
+using namespace std;
 
+//Function declarations
 void init();
 void display();
 void reshape(int width, int height);
 void mouseButton(int button, int state, int x, int y);
 void drawControlPoints();
 void drawVoronoiDiagram();
+//FIXME dev test
 void drawEdges();
+
+//Contains the sites' display position
+std::vector<DCEL::Vertex*/*, DCEL::Vertex::Compare*/> displaySites;
 VoronoiDiagram diagram;
 
-//FIXME: devrait on placer cette variable dans le .h?
-std::set<DCEL::Vertex*, DCEL::Vertex::Compare> sites;
+GLint windowWidth = 500;
+GLint windowHeight = 500;
 
 int main(int argc, char * argv[])
 {
@@ -48,6 +52,7 @@ int main(int argc, char * argv[])
 	glutInitDisplayMode (GLUT_RGB | GLUT_SINGLE);
 	glutCreateWindow ("VoronoiDiagram");
 	
+	//GL hooks declaration
 	glutDisplayFunc(display);
     glutMouseFunc(mouseButton);
 	glutReshapeFunc(reshape);
@@ -76,15 +81,20 @@ void mouseButton( int button, int state, int x, int y )
 	if(state == GLUT_DOWN)
 	{
         GLfloat pixels[3];
-        glReadPixels(x, y, 1, 1, GL_RGB, GL_FLOAT, &pixels);
-//        glReadPixels(x, windowHeight - y, 1, 1, GL_RGB, GL_FLOAT, &pixels);
-        
-//        if(pixels[0] != 0.0 || pixels[1] != 0.0 || pixels[2] != 0.0)
+        glReadPixels(x, windowHeight - y, 1, 1, GL_RGB, GL_FLOAT, &pixels);
+
+		//A site will not be created if it's position is the same of another one : 
+		//Condition based on color (a site is RGB(1.0,0.0,0.0)). 
+        if(!(pixels[0] == 1.0 && pixels[1] == 0.0 && pixels[2] == 0.0))
         {
-            sites.insert(new DCEL::Vertex(x,y));
+            displaySites.push_back(new DCEL::Vertex(x,y));
+			//The site's coordinate for the Voronoi computation is entered as if it was in a 
+			//cartesian plan with the 0.0, 0.0 at the center of the window.
             diagram.addSite(DCEL::Vertex(x - windowWidth/2,-y + windowHeight/2));
+//            diagram.addSite(DCEL::Vertex(-50 ,-50));
+//            diagram.addSite(DCEL::Vertex(0 ,50));
+//            diagram.addSite(DCEL::Vertex(75,-75));
             diagram.fortuneAlgorithm();
-            //return;
         }
 	}
 	glutPostRedisplay();
@@ -104,7 +114,8 @@ void display (void)
 	
     drawControlPoints();
     drawVoronoiDiagram();
-    drawEdges();
+    if(diagram.edges.size() >= 1)
+        drawEdges();
 
     glFlush();
 	glutSwapBuffers();
@@ -128,13 +139,10 @@ void drawControlPoints()
     
     glBegin(GL_POINTS);
 
-        for(auto iter = sites.begin(); iter != sites.end(); ++iter)
-        {
-            glVertex2i((*iter)->x - windowWidth/2, -(*iter)->y + windowHeight/2);
-        }
+		for (int i = 0; i < displaySites.size(); ++i)
+			glVertex2i((displaySites[i])->x - windowWidth / 2, -(displaySites[i])->y + windowHeight / 2);
     
     glEnd();
-    
     glPopMatrix();
 }
 
@@ -144,9 +152,7 @@ void drawVoronoiDiagram()
     //draw voronoid vertex
     
     if(diagram.getVertices().size() == 0)
-    {
         return;
-    }
     
     glColor3f(0.0f, 0.0f, 1.0f);
     glPointSize(5);
@@ -154,14 +160,28 @@ void drawVoronoiDiagram()
     glBegin(GL_POINTS);
     
     for(auto iter = diagram.getVertices().begin(); iter < diagram.getVertices().end(); iter++)
-    {
         glVertex2i(iter->x, iter->y);
-    }
     
     glEnd();
 }
 
 void drawEdges()
 {
-    //TODO: a implanter
+    glPushMatrix();
+    glLoadIdentity();
+    
+    glColor3f(0.0f, 1.0f, 0.0f);
+    
+    glBegin(GL_LINES);
+    
+    for (int i = 0; i < diagram.edges.size(); ++i)
+    {
+        glVertex2i((diagram.edges[i])->getOrigin()->x, (diagram.edges[i])->getOrigin()->y);
+        cout<<"p1: " << (diagram.edges[i])->getOrigin()->x << " " << (diagram.edges[i])->getOrigin()->y;
+        glVertex2i((diagram.edges[i])->getTwin()->getOrigin()->x, (diagram.edges[i])->getTwin()->getOrigin()->y);
+        cout<<"  p2: " << (diagram.edges[i])->getTwin()->getOrigin()->x << " " << (diagram.edges[i])->getTwin()->getOrigin()->y <<endl;
+    }
+    
+    glEnd();
+    glPopMatrix();
 }

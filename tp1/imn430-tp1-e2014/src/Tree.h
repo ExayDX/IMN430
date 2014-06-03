@@ -30,7 +30,10 @@ public:
         return site->z;
     }
     
-    void setEvent (EventT* e) { this->event = e;};
+    PoinT* getPoint()const{
+        return site;
+    }
+    
     //---- Members
 	PoinT*	  site;
 	EdgeT*	  edge;//TODO: should we really put that here ????
