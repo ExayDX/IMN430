@@ -19,7 +19,7 @@
 #include <cassert>
 
 template<class T = float>
-bool loadImages(CImgList<T>& images, const size_t images_count = 2){
+bool loadImages(double& threashold, CImgList<T>& images, const size_t images_count = 2){
     enum eInput{
         eOvalInput  = 'o',
         eBrainInput = 'b',
@@ -44,6 +44,10 @@ bool loadImages(CImgList<T>& images, const size_t images_count = 2){
     while(!(quit = (input == eQuitInput)) && input != eOvalInput && input != eBrainInput);
     
     if(!quit){
+        cout << "Please specify a threashold " << endl
+             << "> ";
+        cin >> threashold;
+        
         switch(static_cast<eInput>(input)){
             case eOvalInput:
                 file = "oval";
@@ -132,13 +136,15 @@ T ComputeNorm(const CImg<T>& v){
 
 template<class T=float>
 CImg<T> RotationMatrix(const CImg<T>& F, const CImg<T>& V){
-    double theta = acos(V.dot(F) / ComputeNorm(F));
+    const double theta = acos(V.dot(F) / ComputeNorm(F));
+    const double cosT = cos(theta);
+    const double sinT = sin(theta);
     
     auto R = CImg<float>(2,2,1,1);
-    R(0,0,0,0) = cos(theta);
-    R(0,1,0,0) = -sin(theta);
-    R(1,0,0,0) = sin(theta);
-    R(1,1,0,0) = cos(theta);
+    R(0,0,0,0) = cosT;
+    R(0,1,0,0) = -sinT;
+    R(1,0,0,0) = sinT;
+    R(1,1,0,0) = cosT;
     
     return R;
 }
@@ -156,32 +162,13 @@ CImg<T> GetFt(const CImg<T>& eValues, const CImg<T>& eVectors){
 
 template<class T=float>
 CImg<T> HomoDp(const CImg<T>& Dp){
-    auto Dph = CImg<float>(Dp.size(), 2,1,1);
+    auto Dph = CImg<T>(Dp.size(), 2,1,1);
     auto j = 0;
     for(auto i = Dp.begin(); i != Dp.end(); ++i, ++j){
         Dph(j,0,0,0) = (*i);
         Dph(j,1,0,0) = 1;
     }
     return Dph;
-}
-
-template<class T=float>
-void saveImage(const CImg<T>& src,
-               const unsigned long width,
-               const unsigned long heigth,
-               const char* filename){
-    CImg<float> out1(width, heigth, src.depth(), 1);
-    for(auto i = out1.begin(); i != out1.end(); ++i){
-        *i = 0;
-    }
-    auto halfW = out1.width()  / 2;
-    auto halfH = out1.height() / 2;
-    for(auto i = 0; i < src.width(); ++i){
-        auto x = PCA::clamp(static_cast<typeof(out1.width())>(src(i,0,0,0)) + halfW, 0, out1.width());
-        auto y = PCA::clamp(static_cast<typeof(out1.height())>(src(i,1,0,0)) + halfH, 0, out1.height());
-        out1(x,y,0,PCA::GRAY) = 255;
-    }
-    out1.save(filename);
 }
 
 //#undef DEBUG_EXERCICE
@@ -282,32 +269,24 @@ int main(int argc, char** argv){
         exit(0);
 #endif
     CImgList<float> images;
-    if(loadImages(images)){
-        PCA pca1;
-        CImg<float> eigenValues1(1,2,images(0).depth(),1);
-        CImg<float> eigenVectors1(2,2,images(0).depth(),1);
-        pca1.GetPCA(&images(0), 10, eigenValues1, eigenVectors1);
-        auto Dimg1 = GetD(pca1.m_pVectorPoint->operator()(0), pca1.m_pVectorPoint->operator()(1));
-        auto Ftimg1 = GetFt(eigenValues1, eigenVectors1);
-        auto V1 = CImg<float>(1,2,1,1);
-        V1(0,0,0,0) = 1;
-        V1(1,0,0,0) = 0;
-        auto Rimg1 = RotationMatrix(Ftimg1, V1);
-        auto rotate1 = Rimg1 * Dimg1;
-        saveImage(rotate1, images(0).width(), images(0).height(), "out1.ppm");
+    double threashold = 0;
         
-        PCA pca2;
-        CImg<float> eigenValues2(1,2,images(1).depth(),1);
-        CImg<float> eigenVectors2(2,2,images(1).depth(),1);
-        pca2.GetPCA(&images(1), 10, eigenValues2, eigenVectors2);
-        auto Dimg2 = GetD(pca2.m_pVectorPoint->operator()(0), pca2.m_pVectorPoint->operator()(1));
-        auto Ftimg2 = GetFt(eigenValues2, eigenVectors2);
-        auto V2 = CImg<float>(1,2,1,1);
-        V2(0,0,0,0) = 1;
-        V2(1,0,0,0) = 0;
-        auto Rimg2 = RotationMatrix(Ftimg2, V2);
-        auto rotate2 = Rimg2 * Dimg2;
-        saveImage(rotate2, images(1).width(), images(1).height(), "out2.ppm");
+    if(loadImages(threashold, images)){
+        for(auto i = 0; i < images.size(); ++i){
+            PCA pca;
+            CImg<float> eigenValues(1,2, images(i).depth(),1);
+            CImg<float> eigenVectors(2,2,images(i).depth(),1);
+            pca.GetPCA(&images(i), threashold, eigenValues, eigenVectors);
+            auto Ft = GetFt(eigenValues, eigenVectors);
+            
+            auto V = CImg<float>(1,2,1,1);
+            V(0,0,0,0) = -1;
+            V(1,0,0,0) = 0;
+            
+            stringstream ss;
+            ss << "out" << i << ".ppm";
+            images(i).rotate((180 * acos(V.dot(Ft) / ComputeNorm(Ft)))/ cimg::PI).save(ss.str().c_str());
+        }
     }
     
     return 0;

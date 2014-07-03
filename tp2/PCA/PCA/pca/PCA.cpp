@@ -12,7 +12,7 @@
 using namespace cimg_library::cimg;
 
 PCA::PCA()
-    : m_pVectorPoint(new images_list_type()){
+    : m_pVectorPoint(new images_list_type()), centroid(0,0){
 }
 
 PCA::~PCA(){
@@ -39,7 +39,8 @@ void PCA::CenterData(CImg<float>* image, float threshold){
     std::vector<pixel> data;
     
     //Get coords of points above the threshold
-    point centroid;
+    centroid.X = 0;
+    centroid.Y = 0;
     for(int i = 0; i != image->width(); ++i){
         for(int j = 0; j < image->height(); ++j){
             const data_type r = image->operator()(i,j,0, RED);

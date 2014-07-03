@@ -12,7 +12,7 @@
     using std::string;
 
 #include "Cimg.h"
-using namespace cimg_library;
+    using namespace cimg_library;
 
 class PCA
 {
@@ -58,6 +58,9 @@ public :
         return std::max(min, std::min(val, max));
     }
     
+    const point& GetCentroid()const{
+        return centroid;
+    }
     image_type& image(const int i)const{
         return m_pVectorPoint->operator()(i);
     }
@@ -184,12 +187,12 @@ public :
         }
     }
     
-//private:TODO remove that
+private:
     void GetCovarianceMatrix(CImg<float>& sMatrix);
     void CenterData(CImg<float>* image, float threshold);
     
     CImgList<float>* m_pVectorPoint;
-    data_type meanColor;
+    point centroid;
 };
 
 
