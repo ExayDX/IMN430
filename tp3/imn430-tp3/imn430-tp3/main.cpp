@@ -55,27 +55,30 @@ int main(int argc, const char * argv[]){
         //STEP 1
         //find 4 points not coplanar
         if(N.size() >= 4){
-            auto i = N.begin();
             //points that create our tetraedon
-            point3d<double>* a = &(*i++);
-            point3d<double>* b = &(*i++);
-            point3d<double>* c = &(*i++);
-            point3d<double>* d = nullptr;
+            auto aItt = N.begin();
+            auto bItt = next(aItt);
+            auto cItt = next(bItt);
+            auto dItt = next(cItt);
             
-            auto ab = vect<double>(*a, *b);
-            auto ac = vect<double>(*a, *c);
+            auto ab = vect<double>(*aItt, *bItt);
+            auto ac = vect<double>(*aItt, *cItt);
+            for(; dItt != N.end() && is_coplanar(ab, ac, vect<double>(*aItt, *dItt)); ++dItt);
             
-            for(; i != N.end() && !d; ++i){
-                d = &(*i++);
+            if(dItt != N.end()){
+                auto a = *aItt;
+                auto b = *bItt;
+                auto c = *cItt;
+                auto d = *dItt;
                 
-                auto ad = vect<double>(*a, *d);
+                N.erase(aItt);
+                N.erase(bItt);
+                N.erase(cItt);
+                N.erase(dItt);
                 
-                if(is_coplanar(ab, ac, ad)){
-                    d = nullptr;
-                }
-            }
-            if(d){
-                cout << "YEAH BABY"<<endl;
+                //STEP 2
+                //Shuffle rests of the points
+                std::random_shuffle(N.begin(), N.end());
             }
             else{
                 cout << "Unable to find 4 points that are not coplanar, program is closing..." << endl;
