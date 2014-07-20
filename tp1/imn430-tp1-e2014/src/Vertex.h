@@ -27,23 +27,24 @@ namespace DCEL {
     public:
         //---- Constructors
         Vertex(HalfEdge* oedge = nullptr) :
-        edge(oedge)
-        ,   x(0)
-        ,   y(0)
-        ,   z(0)
-        {
+			edge(oedge),   
+			x(0),   
+			y(0),   
+			z(0){
         }
         
         Vertex(int xPos, int yPos, HalfEdge* oedge = nullptr, int zPos = 0) :
-        edge(oedge)
-        ,   x(xPos)
-        ,   y(yPos)
-        ,   z(zPos)
-        {
+			edge(oedge),
+			x(xPos), 
+			y(yPos), 
+			z(zPos){
         }
         
-        Vertex(const Vertex& v)
-            : edge(v.edge), x(v.x), y(v.y), z(v.z){
+        Vertex(const Vertex& v) : 
+			edge(v.edge), 
+			x(v.x), 
+			y(v.y), 
+			z(v.z){
         }
         
         //---- Accessors
@@ -56,8 +57,8 @@ namespace DCEL {
         class VertexIterator : public EdgeIterator{
         public:
             //---- Constructors
-            VertexIterator(const Vertex* vertex)
-                : EdgeIterator(vertex->getEdge()){
+            VertexIterator(const Vertex* vertex): 
+				EdgeIterator(vertex->getEdge()){
             }
             
             //---- Overriden Methods
@@ -76,6 +77,7 @@ namespace DCEL {
                 return n;
             }
         };
+
     public:
         typedef VertexIterator iterator_type;
         iterator_type begin(){
@@ -105,14 +107,12 @@ namespace DCEL {
         const bool operator < (const Vertex& v)const{
             return y < v.y;
         }
-        /*
-            Print a Vertex as (x, y, z)
-         */
-        /*friend std::ostream& operator <<(std::ostream& os, const Vertex& v){
-            os << "(";
-            os << v.x << ", " << v.y << ", " << v.z << ")";
-            return os;
-        }*/
+        bool operator > (const Vertex& v){
+            return y > v.y;
+        }
+        const bool operator > (const Vertex& v)const{
+            return y > v.y;
+        }
         
         //---- Members
         HalfEdge* edge;
@@ -121,9 +121,12 @@ namespace DCEL {
         int y;
         int z;
         
-        struct Compare : public std::binary_function<Vertex*, Vertex*, bool>{
+        struct CompareVertex : public std::binary_function<Vertex*, Vertex*, bool>{
             bool operator()(const Vertex* v1, const Vertex* v2){
-                return *v1 < *v2;
+				if (v1->y != v2->y)
+					return v1->y > v2->y;
+				else
+					return v1->x < v2->x; 
             }
         };
     };

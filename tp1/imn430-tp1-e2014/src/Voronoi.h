@@ -9,10 +9,10 @@
 #ifndef __IMN430_TP1__Voronoi__
 #define __IMN430_TP1__Voronoi__
 
+#include <map>
 #include <set>
 #include <queue>
 
-#include "utils.h"
 #include "DCEL.h"
 #include "Tree.h"
 
@@ -20,91 +20,120 @@ using std::vector;
 
 class VoronoiDiagram{
 private:
-    class VoronoiEvent{
-    protected:
-        //---- Constructors
-        VoronoiEvent(DCEL::Vertex* pt, const bool isValid=true)
-            : point(pt), valid(isValid){
-        }
-    public:
-        //---- Desctructors
-        virtual ~VoronoiEvent(){
-            delete point;
+	class VoronoiEvent{
+	private:
+		//---- Members
+		DCEL::Vertex* point;//Point where the event occurs
+		bool valid;//Define if this event is valid (Circle Event can be invalid)
+
+	protected:
+		//---- Constructors
+		VoronoiEvent(DCEL::Vertex* pt, const bool isValid = true)
+			: point(pt), valid(isValid){
+		}
+	public:
+		//---- Destructors
+		virtual ~VoronoiEvent(){
+			//FIXME: we don't delete the point here because it belong to the
+			//          main...
+			//delete point;
+		}
+
+		DCEL::Vertex* getPoint() const{
+			return point; 
+		}
+        
+        bool isValid()const { 
+			return valid; 
+		}
+
+        void setValid(bool valid){
+            this->valid = valid;
         }
         
-        //---- Accessors
-        double getX()const{
-            return point->x;
-        }
-        double getY()const{
-            return point->y;
-        }
-        
-        //---- Virtual Methods
-        virtual bool isSiteEvent()const = 0;
-        
-        //---- Coparator Object
-        struct EventCompare : public std::binary_function<VoronoiEvent*, VoronoiEvent*, bool>{
-            bool operator()(const VoronoiEvent* e1, const VoronoiEvent* e2){
-                return e1->point < e2->point;
-            }
+		//---- Virtual Methods
+		virtual bool isSiteEvent()const = 0;
+
+        //---- Comparator Object
+        struct EventPointCompareY{
+			bool operator()(const VoronoiEvent* ev1, const VoronoiEvent* ev2) const{
+				if (ev1->getPoint()->y != ev2->getPoint()->y)
+					return ev1->getPoint()->y < ev2->getPoint()->y;
+				else
+					return ev1->getPoint()->x < ev2->getPoint()->x;
+			}
         };
-        
-        //---- Members
-        DCEL::Vertex* point;//Point where the event occurs
-        bool valid;//Define if this event is valid (Circle Event can be invalid)
     };
     
     class SiteEvent : public VoronoiEvent{
     public:
         SiteEvent(DCEL::Vertex* pt);
         bool isSiteEvent()const;
-        
     };
 
     class CircleEvent : public VoronoiEvent{
     public:
-        CircleEvent(DCEL::Vertex* pt);
+        CircleEvent(DCEL::Vertex* pt, DCEL::Vertex center, const TreeNode<DCEL::Edge, DCEL::Vertex, CircleEvent>* node);
         bool isSiteEvent()const;
-        bool isValid()const;
-        void setValid(const bool isValid);
-        TreeNode<DCEL::Edge, DCEL::Vertex, CircleEvent>* node;
+        const TreeNode<DCEL::Edge, DCEL::Vertex, CircleEvent>* node;
+        DCEL::Vertex mCenter;
     };
     
 public:
     //---- Typedefs
     typedef TreeNode<DCEL::Edge, DCEL::Vertex, CircleEvent> tree_type;
+    typedef std::set<tree_type, tree_type::Compare> status_type;
     
     //---- Constructors
     VoronoiDiagram(const double owidth = 500, const double oheigth = 500)
-        : line(0), root(nullptr), width(owidth), height(oheigth){
+        : line(0), root(nullptr), width(owidth), height(oheigth) {
     }
     
     //---- Public Methods
-    /*
-        This is the base of the algo.
-        Call this method to generate the diagram using the fortune's algo
-     */
-    void fortuneAlgorithm(const std::set<DCEL::Vertex*, DCEL::Vertex::Compare>& sites);
+    void fortuneAlgorithm(); //entry point
+    void addSite(DCEL::Vertex vertex);
+    const vector<DCEL::Vertex>& getVertices() {
+		return vertices;
+	}
     
 private:
     //---- Private Methods
-    tree_type* getLeftLeaf(const double site_x)const;
-    double getIntersection(tree_type* par, const double y)const;
-    void checkCircle(tree_type* node, DCEL::Vertex* point);
-    DCEL::Vertex* circle(DCEL::Vertex* p1, DCEL::Vertex* p2, DCEL::Vertex* p3, double* y_inter);
+    void getIntersection(DCEL::Vertex* site1, DCEL::Vertex* site2, DCEL::Vertex* i1, DCEL::Vertex* i2, const double y)const;
+    bool computeCircle(DCEL::Vertex p1, DCEL::Vertex p2, DCEL::Vertex p3, double *radius, DCEL::Vertex *center);
+    void finishEdge();
+    DCEL::Edge* createEdges(DCEL::Vertex* s1, DCEL::Vertex* s2, DCEL::Vertex breakpoint);
+    
+    void clearDiagram();
+    DCEL::Region* getRegion(DCEL::Vertex site);
+    void linkRegionToEdge(DCEL::Region* region, DCEL::HalfEdge* edge);
+    DCEL::Edge* getEdge(DCEL::Region *r1, DCEL::Region *r2);
     
     //---- Event handlers
     void handleSiteEvent(DCEL::Vertex* point);
     void handleCircleEvent(VoronoiDiagram::CircleEvent* event);
+    void checkCircleEvent(status_type::iterator site, const tree_type* node, double y);
     
     //---- Members
-    std::priority_queue<VoronoiEvent*> mEventQueue;//Handle events base on it's y coord
-    tree_type* root;//To maintain the topology of the beach line
-    vector<DCEL::Vertex*> vertices;//Keep track of the constructed VD
-    double line;//sweep line
+	double line;//sweep line
+	double width;//Bouding width of the VD
+	double height;//Bounding Heigth of the VD
     
-    double width;//Bouding width of the VD
-    double height;//Bounding Heigth of the VD
+	DCEL::Vertex bbMin;
+    DCEL::Vertex bbMax;
+	
+	tree_type* root;//To maintain the topology of the beach line
+	std::priority_queue<VoronoiEvent, std::vector<VoronoiEvent*>, VoronoiEvent::EventPointCompareY> mEventQueue;
+    status_type mStatusTree;
+    std::set<DCEL::Vertex*, DCEL::Vertex::CompareVertex> sites;
+    std::map<DCEL::Vertex, DCEL::Region*> siteToRegion;
+    
+    //FIXME: dev test
+public:
+	std::vector<DCEL::Edge*> edges;
+    
+	//FIXME to remove
+    //std::set<DCEL::Region*, DCEL::Region::CompareRegionY> regions;
+    
+	vector<DCEL::Vertex> vertices;//Keep track of the constructed VD
 };
 #endif /* defined(__IMN430_TP1__Voronoi__) */
