@@ -33,64 +33,6 @@ ConvexHull::~ConvexHull(){}
 
 bool ConvexHull::loadFile(const char* filename)
 {
-	/*bool success = false;
-
-	if (filename)
-	{
-		pointList.clear();
-
-		std::ifstream ifs(filename, std::ifstream::in);
-
-		if (ifs.is_open())
-		{
-			int counter = 0; 
-			while (!ifs.eof() && counter == NB_POINTS_LIMIT)
-			{
-				++counter; 
-				DCEL::Vertex pt;
-				std::string ptStr; 
-				std::getline(ifs, ptStr);
-
-				std::ostringstream value;
-				bool isX = true;
-				bool isY = false;
-				bool isZ = false; 
-
-				for (int i = 0; i < ptStr.size(); ++i)
-				{ 
-					if (ptStr.at(i) == ' ')
-					{
-						if (isX)
-						{
-							pt.x = std::stof(value.str());
-							isX = false; isY = true; isZ = false; 
-						}
-						else if (isY)
-						{
-							pt.y = std::stof(value.str());
-							isY = false; isZ = true; 
-						}
-						else if (isZ)
-						{
-							pt.z = std::stof(value.str());
-							isZ = false; 
-						}
-						
-						value.clear();
-						value.str("");
-					}
-					else
-						value << ptStr.at(i);
-				}
-
-				pointList.push_back(pt);
-			}
-			success = true;
-			ifs.close();
-		}
-	}
-
-	return success;*/
 	bool success = false;
 
 	if (filename)
