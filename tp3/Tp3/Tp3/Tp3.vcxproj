@@ -66,6 +66,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\imn430-tp3\imn430-tp3\ConvexHull.h" />
     <ClInclude Include="..\..\imn430-tp3\imn430-tp3\DCEL.h" />
     <ClInclude Include="..\..\imn430-tp3\imn430-tp3\Edge.h" />
     <ClInclude Include="..\..\imn430-tp3\imn430-tp3\EdgeIterator.h" />
@@ -74,6 +75,7 @@
     <ClInclude Include="..\..\imn430-tp3\imn430-tp3\Vertex.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\imn430-tp3\imn430-tp3\ConvexHull.cpp" />
     <ClCompile Include="..\..\imn430-tp3\imn430-tp3\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

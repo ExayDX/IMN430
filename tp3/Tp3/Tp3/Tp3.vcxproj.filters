@@ -33,9 +33,15 @@
     <ClInclude Include="..\..\imn430-tp3\imn430-tp3\Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\imn430-tp3\imn430-tp3\ConvexHull.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imn430-tp3\imn430-tp3\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imn430-tp3\imn430-tp3\ConvexHull.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

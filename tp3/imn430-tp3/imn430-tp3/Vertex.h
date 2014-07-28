@@ -160,9 +160,9 @@ namespace DCEL {
         //---- Members
         HalfEdge* edge;
         
-        int x;
-        int y;
-        int z;
+		float x;
+        float y;
+        float z;
         
         struct CompareVertex : public std::binary_function<Vertex*, Vertex*, bool>{
             bool operator()(const Vertex* v1, const Vertex* v2){
