@@ -164,14 +164,25 @@ namespace DCEL {
         float y;
         float z;
         
-        struct CompareVertex : public std::binary_function<Vertex*, Vertex*, bool>{
+        struct CompareVertexY{
             bool operator()(const Vertex* v1, const Vertex* v2){
 				if (v1->y != v2->y)
 					return v1->y > v2->y;
 				else
 					return v1->x < v2->x; 
             }
+
         };
+
+		struct CompareVertexX {
+			bool operator()(const Vertex* v1, const Vertex* v2){
+				if (v1->x != v2->x)
+					return v1->x > v2->x;
+				else
+					return v1->y < v2->y;
+			}
+		};
+
     };
     
     typedef std::shared_ptr<Vertex> vertex_ptr;

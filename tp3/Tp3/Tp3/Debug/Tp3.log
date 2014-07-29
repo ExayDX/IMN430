@@ -1,10 +1,14 @@
-﻿Build started 2014-07-28 4:32:03 PM.
+﻿Build started 2014-07-29 12:20:21 AM.
      1>Project "C:\Users\Myriam\Documents\Université\S-E14\IMN430\tp3\Tp3\Tp3\Tp3.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\glut-3.7\include" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "..\..\imn430-tp3\imn430-tp3\ConvexHull.cpp"
          ConvexHull.cpp
      1>c:\users\myriam\documents\université\s-e14\imn430\tp3\imn430-tp3\imn430-tp3\vertex.h(157): warning C4172: returning address of local variable or temporary
-     1>c:\users\myriam\documents\université\s-e14\imn430\tp3\imn430-tp3\imn430-tp3\convexhull.cpp(176): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\myriam\documents\université\s-e14\imn430\tp3\imn430-tp3\imn430-tp3\convexhull.cpp(83): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\myriam\documents\université\s-e14\imn430\tp3\imn430-tp3\imn430-tp3\convexhull.cpp(107): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\myriam\documents\université\s-e14\imn430\tp3\imn430-tp3\imn430-tp3\convexhull.cpp(193): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\myriam\documents\université\s-e14\imn430\tp3\imn430-tp3\imn430-tp3\convexhull.cpp(204): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\myriam\documents\université\s-e14\imn430\tp3\imn430-tp3\imn430-tp3\convexhull.cpp(219): warning C4018: '<' : signed/unsigned mismatch
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Myriam\Documents\Université\S-E14\IMN430\tp3\Tp3\Debug\Tp3.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\glut-3.7\lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Myriam\Documents\Université\S-E14\IMN430\tp3\Tp3\Debug\Tp3.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Myriam\Documents\Université\S-E14\IMN430\tp3\Tp3\Debug\Tp3.lib" /MACHINE:X86 Debug\ConvexHull.obj
          Debug\main.obj
@@ -13,4 +17,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.01
+Time Elapsed 00:00:01.08
